@@ -1,0 +1,485 @@
+/* ==========================================================================
+   YEON AND PIL — style.css
+
+   Table of contents
+   1. Design tokens (colors, fonts, spacing)
+   2. Base / reset
+   3. Layout helpers
+   4. Header & navigation
+   5. Hero
+   6. Shared section parts (eyebrow, titles, buttons, icons)
+   7. About (paper card, timeline)
+   8. Members
+   9. Listen (videos, icon buttons)
+  10. Press kit (bios, downloads, photos)
+  11. Contact & footer
+  12. Scroll reveal & reduced motion
+  13. Responsive tweaks
+
+   To change the look of the whole site, start with section 1.
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+:root {
+  /* Colors: cold fog blue at the top, rust red toward the bottom */
+  --bg-top:    #060d14;
+  --bg-mid:    #0b1620;
+  --bg-warm:   #1d0d0b;
+  --bg-bottom: #2c100c;
+
+  --ink:       #e8f0f4;   /* main text */
+  --muted:     #9db2bf;   /* secondary text */
+  --fog:       #6fa6bf;   /* cold accent */
+  --ember:     #ee8a74;   /* warm accent */
+  --line:      rgba(232, 240, 244, 0.16);
+  --glass:     rgba(232, 240, 244, 0.06);
+
+  --paper:     #e9edf1;   /* About card */
+  --paper-ink: #1b2430;
+  --paper-red: #8a2f2c;
+
+  /* Fonts */
+  --font-sans:  "Inter", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: "Noto Serif", "Noto Serif KR", Georgia, serif;
+
+  /* Spacing & shape */
+  --max-width: 1120px;
+  --gutter:    clamp(20px, 5vw, 48px);
+  --section-y: clamp(72px, 12vw, 140px);
+  --radius:    16px;
+  --header-h:  68px;
+}
+
+
+/* ==========================================================================
+   2. BASE / RESET
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--header-h);   /* anchors don't hide under the header */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--ink);
+  background: linear-gradient(180deg,
+    var(--bg-top) 0%, var(--bg-mid) 30%, var(--bg-warm) 68%, var(--bg-bottom) 100%);
+}
+
+img { display: block; max-width: 100%; height: auto; }
+a   { color: inherit; text-decoration: none; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+h1, h2, h3, h4, p, figure { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+em { font-style: italic; }
+
+:focus-visible { outline: 2px solid var(--ember); outline-offset: 3px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute; left: 12px; top: -60px; z-index: 100;
+  padding: 10px 16px; background: var(--ink); color: var(--bg-top); border-radius: 8px;
+}
+.skip-link:focus { top: 12px; }
+
+
+/* ==========================================================================
+   3. LAYOUT HELPERS
+   ========================================================================== */
+.container {
+  width: min(var(--max-width), 100% - var(--gutter) * 2);
+  margin-inline: auto;
+}
+
+.section { padding-block: var(--section-y); }
+
+
+/* ==========================================================================
+   4. HEADER & NAVIGATION
+   ========================================================================== */
+.site-header {
+  position: fixed; inset: 0 0 auto 0; z-index: 50;
+  height: var(--header-h);
+  transition: background 0.3s, backdrop-filter 0.3s;
+}
+.site-header.is-scrolled {
+  background: rgba(6, 13, 20, 0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+.header-inner {
+  height: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 900; font-size: 0.8rem; letter-spacing: 0.22em;
+}
+.brand img { width: 34px; height: auto; }
+
+.site-nav { display: flex; gap: clamp(18px, 3vw, 36px); }
+.site-nav a {
+  font-size: 0.78rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.2s;
+}
+.site-nav a:hover,
+.site-nav a.is-active { color: var(--ink); }
+
+/* Hamburger (mobile only) */
+.nav-toggle {
+  display: none;
+  width: 44px; height: 44px; padding: 0;
+  background: none; border: 0; position: relative;
+}
+.nav-toggle-bar,
+.nav-toggle-bar::before,
+.nav-toggle-bar::after {
+  content: ""; position: absolute; left: 11px; right: 11px; height: 2px;
+  background: var(--ink); transition: transform 0.25s, opacity 0.25s;
+}
+.nav-toggle-bar           { top: 21px; }
+.nav-toggle-bar::before   { top: -7px; left: 0; right: 0; }
+.nav-toggle-bar::after    { top:  7px; left: 0; right: 0; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar           { background: transparent; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar::before   { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar::after    { transform: translateY(-7px) rotate(-45deg); }
+
+
+/* ==========================================================================
+   5. HERO
+   ========================================================================== */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex; align-items: flex-end;
+  padding-block: calc(var(--header-h) + 40px) clamp(48px, 9vw, 96px);
+  background:
+    linear-gradient(180deg, rgba(6,13,20,0.5) 0%, rgba(6,13,20,0) 30%, rgba(6,13,20,0.25) 60%, rgba(6,13,20,0.92) 90%, var(--bg-top) 100%),
+    url("../assets/img/hero.webp") center 35% / cover no-repeat;
+}
+
+.hero-title {
+  margin-top: 18px;
+  font-size: clamp(3rem, 11vw, 7.5rem);
+  line-height: 0.95; font-weight: 900; letter-spacing: -0.01em;
+}
+.hero-ko {
+  margin-top: 18px;
+  font-size: clamp(1rem, 2.4vw, 1.4rem); font-weight: 500;
+  letter-spacing: 0.3em; color: var(--ember);
+}
+.hero-tagline {
+  margin-top: 22px; max-width: 34ch;
+  font-size: clamp(1rem, 2vw, 1.2rem); color: #c9d8e0;
+}
+.hero-actions { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 14px; }
+.hero-badge {
+  margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line);
+  max-width: 420px;
+  font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+}
+.hero-badge em { color: var(--ink); }
+
+
+/* ==========================================================================
+   6. SHARED SECTION PARTS
+   ========================================================================== */
+.eyebrow {
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.34em; text-transform: uppercase;
+  color: var(--ember);
+}
+.hero .eyebrow { color: var(--fog); }
+
+.section-title {
+  margin-top: 14px;
+  font-size: clamp(1.7rem, 4vw, 2.6rem); line-height: 1.2; font-weight: 700;
+}
+.block-title {
+  margin: 64px 0 20px;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Icons: shared outline style. Size with .icon-lg */
+.icon {
+  width: 1.25em; height: 1.25em; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 1.5;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.icon-lg { width: 40px; height: 40px; stroke-width: 1.35; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 14px 26px; border-radius: 999px;
+  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  border: 1px solid transparent;
+  transition: transform 0.2s, background 0.2s, border-color 0.2s;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: var(--ink); color: var(--bg-top); }
+.btn-ghost   { border-color: rgba(232, 240, 244, 0.45); }
+.btn-ghost:hover { border-color: var(--ink); background: var(--glass); }
+
+
+/* ==========================================================================
+   7. ABOUT
+   ========================================================================== */
+
+/* Torn paper card.
+   .paper-wrap carries the drop shadow, because clip-path on .paper
+   would cut a shadow off. The jagged edge is the clip-path polygon. */
+.paper-wrap {
+  margin-top: 28px;
+  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55));
+}
+.paper {
+  padding: clamp(32px, 6vw, 72px) clamp(26px, 6vw, 80px);
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(255,255,255,0.55), transparent 60%),
+    var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--font-serif);
+  /* torn edge (generated polygon; safe to replace with any clip-path) */
+  clip-path: polygon(0.00% 0.30%, 1.45% 0.30%, 2.90% 0.30%, 4.35% 0.15%, 5.80% 0.00%, 7.25% 0.11%, 8.70% 0.25%, 10.14% 0.27%, 11.59% 0.29%, 13.04% 0.36%, 14.49% 0.43%, 15.94% 0.41%, 17.39% 0.38%, 18.84% 0.38%, 20.29% 0.38%, 21.74% 0.35%, 23.19% 0.31%, 24.64% 0.26%, 26.09% 0.20%, 27.54% 0.12%, 28.99% 0.04%, 30.43% 0.06%, 31.88% 0.14%, 33.33% 0.16%, 34.78% 0.16%, 36.23% 0.24%, 37.68% 0.36%, 39.13% 0.55%, 40.58% 0.77%, 42.03% 0.79%, 43.48% 0.67%, 44.93% 0.66%, 46.38% 0.73%, 47.83% 0.71%, 49.28% 0.61%, 50.72% 0.46%, 52.17% 0.24%, 53.62% 0.23%, 55.07% 0.44%, 56.52% 0.56%, 57.97% 0.58%, 59.42% 0.60%, 60.87% 0.62%, 62.32% 0.63%, 63.77% 0.60%, 65.22% 0.55%, 66.67% 0.48%, 68.12% 0.48%, 69.57% 0.61%, 71.01% 0.71%, 72.46% 0.73%, 73.91% 0.77%, 75.36% 0.86%, 76.81% 0.90%, 78.26% 0.79%, 79.71% 0.73%, 81.16% 0.81%, 82.61% 0.85%, 84.06% 0.79%, 85.51% 0.75%, 86.96% 0.82%, 88.41% 0.88%, 89.86% 0.80%, 91.30% 0.74%, 92.75% 0.81%, 94.20% 0.87%, 95.65% 0.77%, 97.10% 0.69%, 98.55% 0.74%, 100.00% 0.79%, 99.76% 0.00%, 99.77% 4.00%, 99.81% 8.00%, 99.83% 12.00%, 99.79% 16.00%, 99.73% 20.00%, 99.67% 24.00%, 99.75% 28.00%, 99.83% 32.00%, 99.86% 36.00%, 99.92% 40.00%, 99.76% 44.00%, 99.55% 48.00%, 99.61% 52.00%, 99.78% 56.00%, 99.87% 60.00%, 99.78% 64.00%, 99.74% 68.00%, 99.80% 72.00%, 100.00% 76.00%, 99.94% 80.00%, 99.84% 84.00%, 99.79% 88.00%, 99.70% 92.00%, 99.67% 96.00%, 99.70% 100.00%, 100.00% 99.10%, 98.55% 99.23%, 97.10% 99.37%, 95.65% 99.50%, 94.20% 99.64%, 92.75% 99.65%, 91.30% 99.66%, 89.86% 99.67%, 88.41% 99.69%, 86.96% 99.67%, 85.51% 99.65%, 84.06% 99.61%, 82.61% 99.58%, 81.16% 99.62%, 79.71% 99.67%, 78.26% 99.60%, 76.81% 99.50%, 75.36% 99.51%, 73.91% 99.54%, 72.46% 99.73%, 71.01% 99.98%, 69.57% 99.99%, 68.12% 99.91%, 66.67% 99.84%, 65.22% 99.78%, 63.77% 99.82%, 62.32% 99.92%, 60.87% 99.98%, 59.42% 100.00%, 57.97% 99.92%, 56.52% 99.78%, 55.07% 99.67%, 53.62% 99.59%, 52.17% 99.58%, 50.72% 99.63%, 49.28% 99.67%, 47.83% 99.70%, 46.38% 99.68%, 44.93% 99.62%, 43.48% 99.54%, 42.03% 99.44%, 40.58% 99.38%, 39.13% 99.39%, 37.68% 99.40%, 36.23% 99.39%, 34.78% 99.41%, 33.33% 99.50%, 31.88% 99.56%, 30.43% 99.55%, 28.99% 99.53%, 27.54% 99.51%, 26.09% 99.47%, 24.64% 99.39%, 23.19% 99.34%, 21.74% 99.36%, 20.29% 99.38%, 18.84% 99.36%, 17.39% 99.35%, 15.94% 99.36%, 14.49% 99.37%, 13.04% 99.42%, 11.59% 99.46%, 10.14% 99.49%, 8.70% 99.52%, 7.25% 99.43%, 5.80% 99.36%, 4.35% 99.47%, 2.90% 99.58%, 1.45% 99.60%, 0.00% 99.61%, 0.20% 100.00%, 0.10% 96.00%, 0.02% 92.00%, 0.01% 88.00%, 0.12% 84.00%, 0.13% 80.00%, 0.03% 76.00%, 0.04% 72.00%, 0.10% 68.00%, 0.13% 64.00%, 0.05% 60.00%, 0.09% 56.00%, 0.12% 52.00%, 0.23% 48.00%, 0.34% 44.00%, 0.45% 40.00%, 0.45% 36.00%, 0.37% 32.00%, 0.22% 28.00%, 0.10% 24.00%, 0.13% 20.00%, 0.17% 16.00%, 0.16% 12.00%, 0.11% 8.00%, 0.04% 4.00%, 0.00% 0.00%);
+}
+.paper p + p { margin-top: 1.1em; }
+.paper-lead {
+  margin-bottom: 1.4em;
+  font-size: clamp(1.25rem, 2.8vw, 1.8rem); line-height: 1.5; font-weight: 500;
+}
+.paper p:not(.paper-lead) { font-size: clamp(1rem, 1.6vw, 1.1rem); line-height: 1.85; }
+
+/* Timeline */
+.paper-wrap + .section-title { margin-top: clamp(56px, 9vw, 96px); }
+.timeline {
+  margin-top: 28px;
+  border-left: 1px solid var(--line);
+}
+.timeline li {
+  position: relative;
+  display: grid; grid-template-columns: 130px 1fr; gap: 12px 24px;
+  padding: 18px 0 18px 32px;
+}
+.timeline li::before {                      /* dot on the line */
+  content: ""; position: absolute; left: -5px; top: 28px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--fog);
+}
+.timeline li.is-accent::before { background: var(--ember); box-shadow: 0 0 0 5px rgba(238, 138, 116, 0.2); }
+.timeline time { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); padding-top: 2px; }
+.timeline .is-accent time { color: var(--ember); }
+.timeline p { font-size: 1.05rem; }
+
+
+/* ==========================================================================
+   8. MEMBERS
+   ========================================================================== */
+.members-grid {
+  margin-top: 36px;
+  display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(32px, 6vw, 80px); align-items: center;
+}
+.members-photo img {
+  width: 100%; border-radius: var(--radius);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.5);
+}
+.members-list { display: grid; gap: 28px; }
+
+.member { padding-top: 22px; border-top: 1px solid var(--line); }
+.member-role { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase; color: var(--ember); }
+.member-name { margin-top: 10px; font-size: clamp(1.6rem, 3.4vw, 2.3rem); line-height: 1.2; font-weight: 700; }
+.member-name span { margin-left: 8px; font-size: 0.55em; font-weight: 400; color: var(--muted); }
+.member-nick { margin-top: 4px; color: var(--muted); }
+
+
+/* ==========================================================================
+   9. LISTEN
+   ========================================================================== */
+.video-grid {
+  margin-top: 32px;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px;
+}
+
+/* Click-to-load video: a poster image; JS swaps it for the YouTube player */
+.video {
+  position: relative; padding: 0; border: 0; overflow: hidden;
+  aspect-ratio: 16 / 9; border-radius: var(--radius);
+  background: #000;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+.video img {
+  width: 100%; height: 100%; object-fit: cover; opacity: 0.8;
+  transition: opacity 0.3s, transform 0.5s;
+}
+.video:hover img { opacity: 1; transform: scale(1.03); }
+.video-play {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  color: #fff;
+}
+.video-play .icon { width: 64px; height: 64px; stroke-width: 1.2; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6)); }
+.video-label {
+  position: absolute; left: 16px; bottom: 14px;
+  font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+/* Icon button grid (Spotify, YouTube, ...) */
+.icon-grid {
+  margin-top: 40px;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px;
+}
+.icon-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  height: 150px;
+  border: 1px solid rgba(111, 166, 191, 0.45); border-radius: var(--radius);
+  background: var(--glass);
+  transition: transform 0.2s, border-color 0.2s, background 0.2s;
+}
+.icon-btn span { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: #c9d8e0; }
+.icon-btn:hover { transform: translateY(-4px); border-color: var(--ember); background: rgba(238, 138, 116, 0.1); }
+
+
+/* ==========================================================================
+  10. PRESS KIT
+   ========================================================================== */
+
+/* Bios */
+.bio-list { display: grid; gap: 18px; }
+.bio {
+  padding: 24px 28px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--glass);
+}
+.bio header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.bio h4 { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--fog); }
+.bio p { white-space: pre-line; color: #d5e0e6; }   /* keeps the blank line in the full bio */
+
+.copy-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--line); background: transparent;
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  transition: border-color 0.2s, color 0.2s;
+}
+.copy-btn:hover { border-color: var(--ink); }
+.copy-btn.is-copied { border-color: var(--ember); color: var(--ember); }
+
+/* PDF downloads */
+.download-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.download-list a {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 16px;
+  padding: 18px 22px;
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--glass);
+  transition: border-color 0.2s, background 0.2s;
+}
+.download-list a:hover { border-color: var(--ember); background: rgba(238, 138, 116, 0.08); }
+.dl-name { font-weight: 700; }
+.dl-meta { grid-column: 1; font-size: 0.8rem; color: var(--muted); }
+.download-list .icon { grid-column: 2; grid-row: 1 / span 2; width: 24px; height: 24px; color: var(--ember); }
+
+/* Photo grid */
+.photo-grid {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px;
+}
+.photo-grid a {
+  position: relative; display: block; overflow: hidden;
+  aspect-ratio: 3 / 4; border-radius: 12px; background: #000;
+}
+.photo-grid img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.photo-grid a:hover img { transform: scale(1.05); }
+.photo-grid span {                       /* "Download" label on hover/focus */
+  position: absolute; inset: auto 0 0 0;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 28px 8px 12px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85), transparent);
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  opacity: 0; transition: opacity 0.25s;
+}
+.photo-grid a:hover span,
+.photo-grid a:focus-visible span { opacity: 1; }
+.photo-grid .logo-tile a { display: grid; place-items: center; background: #000; padding: 28px; }
+.photo-grid .logo-tile img { width: 70%; height: auto; object-fit: contain; }
+
+
+/* ==========================================================================
+  11. CONTACT & FOOTER
+   ========================================================================== */
+.contact { text-align: center; }
+.contact-list { margin-top: 36px; display: grid; gap: 10px; justify-items: center; }
+.contact-list a {
+  display: inline-flex; align-items: center; gap: 14px;
+  font-size: clamp(1.15rem, 3.4vw, 1.9rem); font-weight: 500;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s, color 0.2s;
+}
+.contact-list a:hover { color: var(--ember); border-color: var(--ember); }
+.contact-list .icon { color: var(--ember); }
+
+.site-footer { padding-block: 56px 48px; border-top: 1px solid var(--line); }
+.footer-inner { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.footer-inner img { width: 56px; }
+.footer-inner p { font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); text-align: center; }
+
+
+/* ==========================================================================
+  12. SCROLL REVEAL & REDUCED MOTION
+   Elements with .reveal fade in when js/main.js adds .is-visible.
+   Without JavaScript the .js class is never added, so everything stays visible.
+   ========================================================================== */
+.js .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s, transform 0.7s; }
+.js .reveal.is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}
+
+
+/* ==========================================================================
+  13. RESPONSIVE TWEAKS
+   ========================================================================== */
+@media (max-width: 860px) {
+  /* Navigation becomes a dropdown panel */
+  .nav-toggle { display: block; }
+  .site-nav {
+    position: absolute; top: var(--header-h); left: 0; right: 0;
+    flex-direction: column; gap: 0;
+    background: rgba(6, 13, 20, 0.97); border-bottom: 1px solid var(--line);
+    max-height: 0; overflow: hidden; transition: max-height 0.3s;
+  }
+  .site-nav.is-open { max-height: 360px; }
+  .site-nav a { padding: 18px var(--gutter); border-top: 1px solid var(--line); }
+
+  .members-grid { grid-template-columns: 1fr; }
+  .members-photo { max-width: 420px; }
+  .photo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .icon-grid  { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .video-grid,
+  .download-list { grid-template-columns: 1fr; }
+  .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .timeline li { grid-template-columns: 1fr; gap: 2px; }
+  .bio { padding: 20px; }
+  .brand span { display: none; }       /* keep only the logo on small phones */
+}
