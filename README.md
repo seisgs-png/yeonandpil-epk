@@ -29,7 +29,7 @@ but the Google Fonts and YouTube thumbnails need an internet connection).
 |------------------------------------|--------------------------------------------------------------|
 | Change band text or highlights     | `index.html`, sections `ABOUT` and `Highlights`              |
 | Change a link (Spotify, Instagram) | `index.html`, section `LISTEN`, the `href` of the icon button |
-| Swap a YouTube video               | `index.html`, `data-video-id="..."` (the part after `v=`)     |
+| Swap a YouTube video               | `index.html`, `data-video-id="..."` (the part after `v=`); optional `data-start="811"` = start second |
 | Change colors or fonts             | `css/style.css`, section `1. DESIGN TOKENS`                   |
 | Replace the hero image             | overwrite `assets/img/hero.webp` (about 2000px wide)          |
 | Add a press photo                  | put the original in `assets/press/`, a ~1000px webp in `assets/img/`, copy one `<li>` in the `Press photos` list |

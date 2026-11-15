@@ -128,7 +128,9 @@
         const id = button.dataset.videoId;
 
         const frame = document.createElement("iframe");
-        frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+        const start = parseInt(button.dataset.start, 10);   // optional: start time in seconds
+        const startParam = start > 0 ? `&start=${start}` : "";
+        frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0${startParam}`;
         frame.title = button.getAttribute("aria-label") || "YouTube video";
         frame.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
         frame.allowFullscreen = true;
